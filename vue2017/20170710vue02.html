@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <title>vue计算属性</title>
+    <script type="text/javascript" src="js/vue.js"></script>
+    <script type="text/javascript" src="js/vue-resource.js"></script>
+</head>
+<body>
+    <div id="box">
+        a 是 : {{a}}
+        <br>
+        b 是 : {{b}}
+    </div>
+
+    <script>
+        var vm = new Vue({
+            el: "#box",
+            data: {
+                a: 1
+            },
+//            computed:{ //vm.a=110的情况下
+//                //b是属性
+//                b:function(){  //默认调用get
+//                    //业务逻辑代码
+//                    return this.a+1;  //b就是return 返回的值
+//                }
+//            }
+            computed:{ //放业务逻辑的，切记一定要记得return
+                b:{
+                    get: function(){
+                        return this.a+2;
+                    },
+                    set: function(val){ //设置值
+                        this.a=val;
+                    }
+                }
+            }
+        });
+        document.onclick = function(){
+//            vm.a = 110;
+            vm.b = 110;
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+	    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+	    <title>vue-bower-动画</title>
+	    <link rel="stylesheet" type="text/css" href="bower_components/animate.css/animate.css"/>
+	    <!--查看包的版本信息-->
+	    <script src="bower_components/vue/dist/vue.js"></script>
+	    <style>
+	    	#app{
+	    		width: 100px;
+	    		height: 100px;
+	    		background: pink;
+	    	}
+	    	#app01{
+	    		width: 200px;
+	    		height: 200px;
+	    		background-color: red;
+	    		margin-top: 20px;
+	    	}
+	    	/*添加动画效果*/
+	    	/*
+	    	v-enter: 定义进入过渡的开始状态。在元素被插入时生效，在下一个帧移除。(v- 是这些类名的前缀)
+			v-enter-active: 定义进入过渡的结束状态。在元素被插入时生效，在transition/animation 完成之后移除。
+			v-leave: 定义离开过渡的开始状态。在离开过渡被触发时生效，在下一个帧移除。
+			v-leave-active: 定义离开过渡的结束状态。在离开过渡被触发时生效，在transition/animation 完成之后移除。
+	    	*/
+	    	
+	    	/* css过渡 */
+	    	.fade-leave-active{
+	    		transform: translateX(100px);
+	    	}
+	    	.fade-enter-active, .fade-leave-active {
+			    transition: opacity .5s
+			}
+			.fade-enter, .fade-leave-active {
+			    opacity: 0
+			}
+			
+			/* css动画  */
+			.bounce-enter-active {
+			 	animation: bounce-in .5s;
+			}
+			.bounce-leave-active {
+			 	animation: bounce-out .5s;
+			}
+			@keyframes bounce-in {
+				0% {
+				    transform: scale(0);
+				}
+				50% {
+				    transform: scale(1.5);
+				}
+				100% {
+				    transform: scale(1);
+				}
+			}
+			@keyframes bounce-out {
+				0% {
+				    transform: scale(1);
+				}
+				50% {
+				    transform: scale(1.5);
+				}
+				100% {
+				    transform: scale(0);
+				}
+			}
+	    </style>
+	</head>
+	<body>
+		<div id="box">
+			<!--css过渡-->
+			<input type="button" value="按钮" @click="toggle" />
+			<transition name='fade'>
+				<div id="app" v-show='bSign'></div>
+			</transition>
+			<br />
+			<br />
+			<!--css动画-->
+			<input type="button" value="按钮" @click='toggle01' />
+			<transition name='bounce'>
+				<div id="app01" class="animated" v-show='big'></div>
+			</transition>
+			
+			<!--自定义过渡类名-->
+			<button @click="show = !show">toggle</button>
+			<transition :duration='{enter: 500, leave:800}' name="custom-classes-transition" enter-active-class='animated tada' leave-active-class='animated bounceOutRight'>
+				<p v-if="show">hello</p>
+			</transition>
+		</div>
+		
+		<script type="text/javascript">
+			new Vue({
+				el: '#box',
+				data:{
+					bSign: true,
+					big: true,
+					show: true
+				},
+				methods:{
+					//一般写法
+//					toggle:function(){
+//						this.bSign=!this.bSign;
+//					}
+					
+					//es6的写法
+					toggle(){
+						this.bSign=!this.bSign;
+					},
+					toggle01(){
+						this.big=!this.big;
+					}
+				}
+			})
+		</script>
+	</body>
+</html>

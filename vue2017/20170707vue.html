@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+	<title>交互</title>
+	<!-- <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css"> -->
+	 <script type="text/javascript" src="js/jquery-1.11.1.min.js"></script>
+	<!-- <script type="text/javascript" src="js/bootstrap.min.js"></script> -->
+	<script type="text/javascript" src="js/vue.js"></script>
+	<script type="text/javascript" src="js/vue-resource.js"></script>
+</head>
+<body>
+	<div id="box">
+		<input type="button" value="按钮" @click='get()'>
+	</div>
+
+	<script type="text/javascript">
+		window.onload = function(){
+			new Vue({
+				el: '#box',
+				data: {
+
+				},
+				methods: {
+				    //get获取一个普通文本数据
+					get: function(){
+						this.$http.get('vue.txt').then(function(res){
+							alert(res.data);
+						},function(res){
+							alert(res.status); //失败就弹出404
+						});
+					}
+
+					//get给服务器发送数据(在服务器8080里可看到结果)
+//                    get: function(){
+//                        this.$http.get('get.php',{
+//                            a: 1,
+//							b: 2
+//						}).then(function(res){
+//                            alert(res.data);
+//						},function(res){
+//                            alert(res.status); //失败就弹出404
+//                        });
+//                    },
+                    //post给服务器发送数据(在服务器8080里可看到结果)
+//                    post: function(){
+//                        this.$http.post('post.php',{
+//                            a: 1,
+//                            b: 2
+//                        },{
+//                           emulateJSON: true
+//						}).then(function(res){
+//                            alert(res.data);
+//                        },function(res){
+//                           alert(res.status); //失败就弹出404
+//                        });
+//                    }
+//					//jsonp  360好搜接口:https://sug.so.360.cn/suggest?callback=suggest_so&&word=a
+//                    get: function(){
+//               		this.$http.jsonp('https://sug.so.360.cn/suggest?callback=suggest_so&&word=a',{
+//                            word: 'a'
+//                        }).then(function(res){
+//                            alert(res.data);
+//                        },function(res){
+//                            alert(res.status); //失败就弹出4046hhy/su?wd=a&cb=jshow
+//                        });
+//                    },
+//
+//                    //百度接口 https://sp0.baidu.com/5a1Fazu8AA54nxGko9WTAnF
+//                    get:function(){
+//                        this.$http.jsonp('https://sp0.baidu.com/5a1Fazu8AA54nxGko9WTAnF6hhy/su',{
+//                           wd: 'a'
+//                        },{
+//                            jsonp: 'cb'  //callbank名字,看接口的名字
+//                        }).then(function(res){
+//                            alert(res.data.s);
+//                        },function(res){
+//                            alert(res.status);
+//                        });
+//                    }
+
+                }
+			})
+		}
+	</script>
+
+	<style>
+		*{
+			margin: 0;
+			padding:0;
+		}
+		.gray{
+			background: gray;
+		}
+	</style>
+	<!--百度下拉菜单-->
+	<div id="container">
+		<input type="text" v-model="t1" @keyup="get($event)" @keydown.down="changeDown" @keydown.up.prevent="changeDown">
+		<ul>
+			<li v-for="(value,$index) in myData" :class="{gray:$index==now}">{{value}}</li>
+		</ul>
+		<p v-show="myData.length==0">暂无数据......</p>
+	</div>
+
+	<script type="text/javascript">
+		$(function(){
+		    new Vue({
+				el: '#container',
+				data: {
+					t1: '',
+					myData: []
+				},
+				methods: {
+					get: function(ev){
+					    if(ev.keyCode==38 || ev.keyCode==40) return;
+						if(ev.keyCode==13){
+							window.open('https://www.baidu.con/s?wd='+this.t1);
+							this.t1='';
+						};
+                        window.baidu={};
+                        window.baidu.sug=function(json){
+                            window.boomshakalaka(JSON.stringify(json));
+                        }
+					    this.$http.jsonp('https://sp0.baidu.com/5a1Fazu8AA54nxGko9WTAnF6hhy/su',{
+                            params: {
+                                wd: this.t1
+                            },
+                            jsonpCallback : 'boomshakalaka'
+						}).then(function(res){
+						    this.myData=res.data.s
+						},function(){
+
+					 	})
+					},
+					changeDown: function(){
+					    this.now++;
+					    if(this.now==this.myData.length)this.now=-1;
+					    this.t1 = this.myData[this.now];
+					},
+                    changeUp: function(){
+                        this.now--;
+                        if(this.now==-2)this.now=this.myData.length-1;
+                        this.t1 = this.myData[this.now];
+                    },
+				}
+			})
+		})
+	</script>
+</body>
+</html>

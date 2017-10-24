@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/> 
+		<title>vue拖拽</title>
+		<meta name="keywords" content="" />  
+		<meta name="description" content="" />
+		<style>
+			*{
+				margin: 0;
+				padding: 0;
+			}
+			.select-item{
+				background-color:  #5bc0de;
+				display: inline-block;
+				text-align: center;
+				border-radius: 3px;
+				margin-right: 10px;
+				cursor: pointer;
+				padding: 6px 20px;
+			}
+			 .cursored{  
+			  	cursor: default;  
+			}  
+			.project-content,.people-content {  
+			    margin: 30px 50px;  
+			}  
+			.people-content {  
+			    margin-top: 30px;  
+			}  
+			.drag-div {  
+			    border: 1px solid #5bc0de;  
+			    padding:10px;  
+			    margin-bottom: 10px;  
+			    width: 800px;  
+			    cursor: pointer;  
+			}  
+			.select-project-item {  
+			    display: inline-block;  
+			    text-align: center;  
+			    border-radius: 3px;  
+			}  
+			.drag-people-label{  
+				margin-bottom:0;  
+				padding-right:10px;  
+			}  
+			[v-cloak]{  
+			    display:none;  
+			}  
+		</style>
+	</head>
+	<body>
+		<div class="drag-content" id="dragCon">
+			<div class="project-content">
+				<div class="select-item" draggable="true" @dragstart="drag($event)" v-for='pjdt in projectdatas'>{{pjdt.name}}</div>
+			</div>
+			<div class="people-content">
+				<div class="drag-div" v-for='ppdt in peopledata' @drop='drop($event)' @dragover='allowDrop($event)'>
+					<div class="select-poject-item">
+						<label class="drag-people-label">{{ppdt.name}}:</label>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<script type="text/javascript" src="js/vue.js"></script>
+		<script type="text/javascript">
+			var dom;
+			var vm = new Vue({
+				el: '#dragCon',
+				data:{
+					projectdatas:[{
+						id:1,
+						name:'grape'
+					},{
+						id:2,
+						name:'strawberry'
+					},{
+						id:3,
+						name:'apple'
+					},{
+						id:4,
+						name:'orange'
+					}],
+					
+					peopledata:[{
+						id:1,
+						name: '小明'
+					},{
+						id:2,
+						name:'rose'
+					},{
+						id:3,
+						name:'张三'
+					},{
+						id:4,
+						name:'small'
+					}]
+				},
+				mounted:function(){
+					this.$nextTick(function(){
+						
+					})
+				},
+				watch:{
+					projectdatas:{
+						handler:function(val,oldval){
+							
+						},
+						deep:true
+					},
+					peopledata:{
+						handler:function(val,oldval){
+							
+						},
+						deep:true  //深度监视数据的变化
+					}
+				},
+				
+				methods:{
+					drag:function(event){
+						dom = event.currentTarget
+					},
+					drop:function(event){
+						event.preventDefault();
+						event.target.appendChild(dom);
+					},
+					allowDrop:function(event){
+						event.preventDefault();
+					}
+				}
+			})
+		</script>
+	</body>
+</html>

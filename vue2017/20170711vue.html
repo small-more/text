@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <title>vue实例属性</title>
+    <script type="text/javascript" src="js/vue.js"></script>
+    <script type="text/javascript" src="js/vue-resource.js"></script>
+</head>
+<body>
+    <div id="box">{{a}}</div>
+
+    <script>
+        var vm = new Vue({
+            el : '#box',
+            aa: 22, //自定义属性
+            data:{
+                a:1
+            }
+        })
+        vm.$el.style.background="pink";
+
+        console.log(vm.$data.a);
+
+        vm.$mount('#box'); //在没有el(未挂载)的情况下，可以用$mount手动挂载
+
+        console.log(vm.$options.aa); //获取自定义属性
+    </script>
+</body>
+</html>

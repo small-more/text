@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <title>vue指令</title>
+    <!--<script type="text/javascript" src="js/jquery-1.11.1.min.js"></script>-->
+    <script type="text/javascript" src="js/vue.js"></script>
+</head>
+<body>
+    <div id="box01">
+        <input type="text" v-focus>
+        <br>
+        <br>
+        <span v-red>{{msg}}</span>
+        <br>
+        <br>
+    </div>
+
+    <script>
+        Vue.directive('red',function(el){
+            // 改变元素背景
+            el.style.background='red';
+        });
+        Vue.directive('focus',function(el){
+            //聚焦元素
+            el.focus();
+        });
+        window.onload = function(){
+            var vm = new Vue({
+                el: '#box01',
+                data: {
+                    msg: 'hello'
+                }
+            })
+        }
+    </script>
+</body>
+</html>

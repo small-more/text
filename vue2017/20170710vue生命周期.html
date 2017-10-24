@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <title>vue制作weibo</title>
+    <link rel="stylesheet" href="weibo/style/weibo.css">
+    <script type="text/javascript" src="js/vue.js"></script>
+    <script type="text/javascript" src="js/vue-resource.js"></script>
+    <style>
+        /*防止(出现花括号)闪烁*/
+        [v-cloak]{
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="znsArea">
+        <!--留言-->
+        <div class="takeComment">
+            <textarea name="textarea" class="takeTextField" id="tijiaoText" v-model="t1"></textarea>
+            <div class="takeSbmComment">
+                <input type="button" class="inputs" value="" @click="add"/>
+                <span>(可按 Enter 回复)</span>
+            </div>
+        </div>
+        <!--已留-->
+        <div class="commentOn">
+            <div class="noContent" v-show="msgData.length==0">暂无留言</div>
+            <div class="messList">
+                <div class="reply" v-for="item in msgData" v-cloak>
+                    <p class="replyContent">{{item.content}}</p>
+                    <p class="operation">
+                        <span class="replyTime">{{item.time | date}}</span>
+                        <span class="handle">
+                            <a href="javascript:;" class="top">{{item.acc}}</a>
+                            <a href="javascript:;" class="down_icon">{{item.ref}}</a>
+                            <a href="javascript:;" class="cut">删除</a>
+                        </span>
+                    </p>
+                </div>
+            </div>
+            <div class="page">
+                <a href="javascript:;" class="active">1</a>
+                <a href="javascript:;">2</a>
+                <a href="javascript:;">3</a>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        //时间转化器
+        Vue.filter('date',function(input){
+            var oDate = new Date(input*1000);
+            return oDate.getFullYear()+'-'+(oDate.getMonth()+1)+'-'+oDate.getDate()+'-'+oDate.getHours()+'-'+oDate.getMinutes()+':'+oDate.getSeconds();
+        });
+        window.onload = function() {
+            var URL = "weibo/weibo.php";
+            new Vue({
+                el: '.znsArea',
+                data: {
+                    //vue的属性
+                    t1: '',
+                    msgData: []
+                },
+                methods: {
+                    add: function(){
+                        //发送请求
+                        this.$http({
+                            url: URL,
+                            data:{
+                                //后台发送的数据
+                                act: 'add',
+                                content: this.t1
+                            }
+                        }).then(function (res) {
+                            var json = res.data;
+                            console.log(json);
+
+                            //msgData 添加数据
+                            this.msgData.unshift({
+                                content: this.t1,
+                                time: json.time,
+                                acc: 2,
+                                ref: 15,
+                                id: json.id
+                            });
+                            this.t1 = '';
+                        });
+                    },
+                    getPageData: function(n){
+                        this.$http({
+                            url: URL,
+                            data:{
+                                act: 'get',
+                                page: n
+                            }
+                        }).then(function(res){
+//                            console.log(res.data);
+                            var arr = res.data;
+                            for(var i=0; i<arr.length; i++){
+                            	//msgData添加数据
+                                this.msgData.push({
+                                    content: arr[i].content,
+                                    time: arr[i].time,
+                                    acc: arr[i].acc,
+                                    ref: arr[i].ref,
+                                    id: arr[i].id
+                                })
+                            } 
+                        })
+                    }
+                },
+                //vue生命周期
+                //beforeCreate  组建实例刚被创建，属性和方法等都没有
+                //created       实例已经创建完成，属性已经绑定
+                //beforeMount   模板编译之前
+                //mounted       模板编译之后
+                //beforeUpdate  组建更新之前
+                //updated       组建更新之后
+                //beforeDestroy 组件销毁之前
+                //destroyed     组件销毁之后
+                updated: function(){
+                    this.getPageData(1);
+                }
+            })
+        }
+    </script>
+    
+    <div id="box" style="margin-top:100px;">
+    	<input type="button" value="更新数据" @click="update" />
+    	<input type="button" value="销毁组件" @click="destroy" />
+    	{{msg}}
+    </div>
+    
+    
+    <script type="text/javascript">
+    	new Vue({
+    		el: "#box",
+    		data: {
+    			msg: 'good lucky!'
+    		},
+    		methods:{
+    			update(){
+    				this.msg = "hello everybody!";
+    			},
+    			destroy(){
+    				this.$destroy();
+    			}
+    		},
+            beforeCreate(){
+            	console.log('组建实例刚被创建');
+            },
+            created(){
+            	console.log('实例已经创建完成');
+            },
+            boforeMount(){
+            	console.log('模板编译之前');
+            },
+            mounted(){
+            	console.log('模板编译之后');
+            },
+            beforeUpdate(){
+            	console.log('组建更新之前');
+            },
+            updated(){
+            	console.log('组建更新之后');
+            },
+            beforeDestroy(){
+            	console.log('组件销毁之前');
+            },
+            destroyed(){
+            	console.log('组件销毁之后');
+            }
+    	})
+    </script>
+</body>
+</html>

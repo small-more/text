@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <title>vue自定义过滤器</title>
+    <script type="text/javascript" src="js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="js/vue.js"></script>
+</head>
+<body>
+    <!-- 过滤器  大写:uppercase 小写:lowercase  首字母大写:capitalize   美元符号:currency-->
+    <!--在vue2.0里 过滤器只能用类似函数的写法reverseString('I must tell you:')，括号内是参数,不同于vue1.0的用空格后加参数的写法-->
+    <!--在vue2.0里 管道符'|'只能用在mousetache 和 v-bind中-->
+    <div id="box">
+        <p>msg is: <br>{{msg}}</p>
+        <hr>
+        <!--reverseString反转顺序的字符串-->
+        <p>reverse msg is: <br>{{msg|reverseString('Hello:')}}</p>
+        <hr>
+
+        <p>{{msg}}</p>
+        
+        <hr>
+        <p>{{num | toDou}}</p>
+        
+        <hr />
+        <!--自定义过滤器传参-->
+        <h2>{{num | toDou("12","5")}}</h2>
+    </div>
+
+    <script>
+        window.onload = function(){
+            //类似于自定义指令，可以用全局方法 Vue.filter() 注册一个自定义过滤器，它接收两个参数：过滤器 ID 和过滤器函数。
+            Vue.filter('reverseString',function(value,myString){
+                // function里第一个参数value默认为使用这个过滤器的data值，在本例中是msg的值'you are so cool'。请注意：第一个参数必须为自身的值，后面可以加任意多的参数
+                return myString+value.split('').reverse().join('');
+            });
+            Vue.filter('uppercase',function(value){
+                if(!value){
+                    return ''
+                }
+                value = value.toString();
+                return value.charAt(0).toUpperCase()+value.slice(1);
+            });
+            
+	    	Vue.filter('toDou',function(n,a,b){
+	    		console.log(a+','+b);
+	    		return n<10?'0'+n:''+n;
+	    	});
+
+            new Vue({
+                el: '#box',
+                data:{
+                    msg: 'you are so cool',
+                    num: 1
+                }
+            })
+        }
+    </script>
+
+
+    <!--vue2.0搜索过滤器功能-->
+    <div id="app">
+        <input type="text" v-model="name">
+        <ul>
+            <li v-for="user in newUsers">
+                {{user.name}}
+            </li>
+        </ul>
+    </div>
+
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                name: '',
+                users: [
+                    {name: 'Mary'},
+                    {name: 'Elle'},
+                    {name: 'Rose'},
+                    {name: 'Mark'},
+                    {name: '张'}
+                ]
+            },
+            computed:{
+                newUsers: function(){
+                    var that = this;
+                    return that.users.filter(function(user){
+                        return user.name.toLowerCase().indexOf(that.name.toLowerCase()) !== -1;
+                    })
+                }
+            }
+        })
+    </script>
+
+    <!--vue2.0自定义日期时间过滤器-->
+    <div id="time">
+        <p>{{a | data}}</p>
+    </div>
+
+    <script>
+        Vue.filter('data',function(input){
+            var d = new Date(input);
+            var year = d.getFullYear();
+            var month = d.getMonth() +1; //getMonth()返回的值是0(一月)-11(十二月),所以用数字表示要+1
+            var day = d.getDate() < 10 ? '0'+d.getDate() : '' + d.getDate();
+            var hour = d.getHours();
+            var minutes = d.getMinutes();
+            var seconds = d.getSeconds();
+            return year + '/' + month + '/' + day + '-' + hour + ':' + minutes + ':' + seconds;
+        })
+        new Vue({
+            el: '#time',
+            data:{
+                a: Date.now()
+            }
+        });
+    </script>
+</body>
+</html>

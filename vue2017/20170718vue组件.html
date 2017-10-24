@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+		<title>vue组件</title>
+		<!--查看包的版本信息-->
+	    <script src="bower_components/vue/dist/vue.js"></script>
+	</head>
+	<body>
+		<div id="box">
+			<aaa></aaa>
+		</div>
+		
+		<script type="text/javascript">
+			var Aaa = {
+				template:'<h1>这是标题3</h1>'
+			};
+			//全局组件
+			Vue.component('aaa',Aaa);
+			
+			var vm = new Vue({
+				el: '#box',
+				data:{
+					
+				},
+				//局部组件(放到某个组件内部)
+//				components:{
+//					aaa: Aaa
+//				}
+			});
+		</script>
+		
+		<div id="app"></div>
+		
+		<script type="text/javascript">
+			//组件里面放数据：data必须是函数的形式，函数必须返回的是一个对象(json)
+			//创建构造器
+			var profile = {
+				template: '<p @click="change">{{one}} {{two}}</p>',
+				data(){
+					return{
+						one: 'apple',
+						two: 'mark'
+					};
+				},
+				methods:{
+					change(){
+						this.one = 'changed'
+					}
+				}
+			};
+			// 创建 profile 实例，并挂载到一个元素上。
+			new profile().$mount('#app');
+		</script>
+		
+		<!--局部组件  和 模板的配合使用-->
+		<div id="container">
+			<my-aaa></my-aaa>
+		</div>
+		
+		
+		
+		<template id="abc">
+			<!--每个组件中只有一个根元素  所以要用div包裹着-->
+			<div>
+				<h1>h1标题</h1>
+				<ul>
+					<li v-for='val in arr'>
+						{{val}}
+					</li>
+				</ul>
+			</div>
+		</template>
+		
+		<script type="text/javascript">
+			var vm01 = new Vue({
+				el: '#container',
+				components:{
+					'my-aaa':{
+						data(){
+							return{
+								infor: 'welcome vue',
+								arr:['apple','orange','banana']
+							}
+						},
+						methods:{
+							change01(){
+								this.infor = 'hello world';
+							}
+						},
+						template:'#abc'
+					}
+				}
+			})
+		</script>
+		
+		
+		<!--动态组件  <component :is='组件名'></component>-->
+		<div id="dynamic">
+			<input type="button" @click="a='red'" value="red组件" />
+			<input type="button" @click="a='pink'" value="pink组件" />
+			<component :is='a'></component>
+		</div>
+		
+		<script type="text/javascript">
+			var vm02 = new Vue({
+				el: '#dynamic',
+				data:{
+					a: 'red'
+				},
+				components:{
+					'red':{
+						template:'<p>这是red组件</p>'
+					},
+					'pink':{
+						template:"<p>这是pink组件</p>"
+					}
+				}
+			})
+		</script>
+		
+		<!--父子组件  数据不共享-->
+		<div id="father">
+			<qqq></qqq>
+		</div>
+		
+		<script type="text/javascript">
+			var vm03 = new Vue({
+				el: '#father',
+				data:{
+					b:'qqq'
+				},
+				components:{
+					'qqq':{
+						//这是父组件的数据(一般情况下，子组件不能共用父组件的数据)
+						data(){
+							return{
+								message:'我是父组件的数据'
+							}
+						},
+						template:'<div><h1>这里是标题1---->{{message}}</h1><sss></sss></div>',
+						components:{
+							'sss':{
+								template:'<h4>这里是标题4</h4>'
+							}
+						}
+					}
+				}
+			})
+		</script>
+		
+		
+		<!--父子组件  子组件共享父组件数据-->
+		<div id="share">
+			<ggg></ggg>
+		</div>
+		
+		<template id="ggg">
+			<div>
+				<h2>222</h2>
+				<hhh :m="msg2" :my-msg='msg1'></hhh>
+			</div>
+		</template>
+		
+		<script type="text/javascript">
+			var vm04 = new Vue({
+				el: '#share',
+				data:{
+					c:'ggg'
+				},
+				components:{
+					'ggg':{
+						//这是父组件的数据(一般情况下，子组件不能共用父组件的数据)
+						data(){
+							return{
+								msg1:1111,
+								msg2:'我是父组件的数据'
+							}
+						},
+						template:'#ggg',
+						components:{
+							'hhh':{
+								//props 可以是数组或对象，用于接收来自父组件的数据
+//								props:['m','myMsg'],
+								props:{
+									'm': String,
+									'myMsg': Number
+								},
+								template:'<h4>这里是标题4--->{{m}} <br>{{myMsg}}</h4>'
+							}
+						}
+					}
+				}
+			}) 
+		</script>
+		
+		
+		<!--父子组件  父组件共享子组件数据-->
+		<div id="common">
+			<rrr></rrr>
+		</div>
+		
+		<!--********切记,template里的标签一定要用个div包裹-->
+		
+		<template id="rrr">
+			<div>
+				<span>我是父级  -> {{msg3}}</span>
+				<iii @child-msg="get"></iii>
+			</div>
+		</template>
+		<template id="iii">
+			<div>
+				<h3>子组件</h3> 
+				<input type="button" value="send" @click="send" />
+			</div>
+		</template>
+		
+		<script type="text/javascript">
+			var vm05 = new Vue({
+				el: '#common',
+				data:{
+					d:'rrr'
+				},
+				components:{
+					'rrr':{
+						data(){
+							return{
+								msg3: 2253,
+								msg4: '我是父组件的数据01'		
+							}
+						},
+						template:'#rrr',
+						methods:{
+							get(msg3){
+								this.msg3=msg3
+							}
+						},
+						components:{
+							'iii':{
+								//这是子组件的数据(一般情况下，父组件不能共用子组件的数据)
+								data(){
+									return{
+										d:'我是子组件的数据'
+									}
+								},
+								template:'#iii',
+								methods:{
+									send(){
+										//$emit(事件名, 数据)
+						 				this.$emit('child-msg',this.d)
+									}
+								}
+							}
+						}
+					}
+				}
+			});
+		</script>
+	</body>
+</html>

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+		<title>vue2.0版本上</title>
+		<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+		<script type="text/javascript" src="js/jquery-1.11.1.min.js"></script>
+		<script type="text/javascript" src="js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="js/vue.js"></script>
+	</head>
+	<body>
+
+		<div id="example"></div>
+
+		<script type="text/javascript">
+			//vue都会代理其data对象里所有的属性
+			//**只有这些被代理的属性是响应的
+			var data = { a: 1};
+			//通过构造函数Vue 创建一个Vue
+			var vm = new Vue({
+				el: '#example',
+				data: data
+			})
+
+			console.log(vm.a === data.a); //true
+			//$data是实例属性
+			console.log(vm.$data === data);
+			console.log(vm.$el === document.getElementById('example'));
+
+			//设置属性也会影响到原始数据
+			vm.a = 3
+			console.log(data.a);  //3
+
+			data.a = 6
+			console.log(vm.a);  //6
+		</script>
+
+		<!-- 双向数据绑定 -->
+		<div id="box">
+			<span>Message: {{msg}}</span>
+			<br><br>
+			<!-- 常用指令: v-model 一般表单元素 -->
+			<input type="text" v-model='msg'>
+			<br><br>
+			<span>{{arr}}</span>
+			<br><br>
+			<span>{{json}}</span>  <!-- [object,object] -->
+			<br><br>
+			<!-- v-for循环 -->
+			<ul>
+				<!-- $index索引  $key 只在vue1.0可以使用-->
+				<li v-for='value in arr'>{{value}}</li>
+			</ul>
+			<hr>
+			<ul>
+				<li v-for='item in json'>{{item}}</li>
+				<br>
+				<!-- k:key  v:value 只能在json下使用-->
+				<li v-for="(k,v) in json">{{k}} {{v}}</li>
+			</ul>
+			<!-- v-on 指定事件 -->
+			<input type="button" value="按钮" v-on:click="add">
+			<!-- v-bind 绑定属性 -->
+
+		</div>
+
+		<script type="text/javascript">
+			var vm01 = new Vue({
+				el: '#box',  //选择器class id
+				data: {
+					a: 10,
+					msg: 'hello vue.js!',
+					arr: ['apple','banana','orange','pear'],
+					json:{a: 'apple', b: 'banana', c: 'pear'}
+				},
+				methods:{
+					add: function(){
+						//添加数据
+						this.arr.push('watermelon')
+					}
+				},
+				//created钩子函数
+				created: function () {
+					console.log('a is: ' + this.a);  //this指向调用它的vue实例\
+					console.log('msg is: ' + this.msg);
+				}
+			})
+		</script>
+
+		<!-- v-if条件渲染 -->
+		<!-- <h1 v-if='ok'>yes</h1>
+		<h1 v-else>no</h1> -->
+
+		<br><br>
+		<!-- 显示隐藏 -->
+		<div id="show">
+			<input type="button" value="点击" v-on:click="a=false">
+			<div style="width: 300px; height: 300px; background: pink;" v-show='a'></div>
+		</div>
+		<br><br>
+		<script type="text/javascript">
+			var vm02 = new Vue({
+				el: '#show',
+				data: {
+					a: true
+				}
+			})
+
+		</script>
+
+		<!-- bootstrap + vue简易留言板(todolist) -->
+
+		<!-- 后续需处理的问题：删除全部时的弹出框里面的标题改变成 确认删除全部? -->
+		<br><br>
+		<div class="container" id="container">
+			<form role="form">
+				<div class="form-group">
+					<label for="age">用户名:</label>
+					<input type="text" id="username" class="form-control" placeholder="请输入用户名" v-model="username">
+				</div>
+				<div class="form-group">
+					<label for="age">年龄:</label>
+					<input type="text" id="age" class="form-control" placeholder="请输入年龄" v-model="age">
+				</div>
+				<div class="form-group">
+					<input type="button" value="添加" class="btn btn-primary" v-on:click="add">
+					<input type="reset" value="重置" class="btn btn-danger">
+				</div>
+			</form>
+			<hr>
+			<table class="table table-border table-hover">
+				<caption class="h2 text-info">用户信息表</caption>
+				<tr class="text-danger">
+					<th class="text-center">序号</th>
+					<th class="text-center">名字</th>
+					<th class="text-center">年龄</th>
+					<th class="text-center">操作</th>
+				</tr>
+				<!-- ***vue2.0上索引的使用方法(items, index)*** -->
+				<tr class="text-center" v-for="(items, index) in myData" :key="items.id">
+					<td>{{ index+1 }}</td>
+					<td>{{items.name}}</td>
+					<td>{{items.age}}</td>
+					<td>
+						<button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#layer" v-on:click="nowIndex=index">删除</button>
+					</td>
+				</tr>
+				<tr v-show="myData.length != 0">
+					<td colspan="4" class="text-right">
+						<button class="btn btn-danger" v-on:click="nowIndex=-2" data-toggle="modal" data-target="#layer">删除全部</button>
+					</td>
+				</tr>
+				<tr v-show="myData.length==0">
+					<td colspan="4" class="text-center text-muted">
+						<p>暂无数据......</p>
+					</td>
+				</tr>
+			</table>
+
+			<!-- 模态框  弹出框 -->
+			<div role="dialog" class="modal" id="layer">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button class="close" data-dismiss="modal">
+								<span>&times;</span>
+							</button>
+							<h4 class="modal-title">{{sureMsg}}</h4>
+						</div>
+						<div class="modal-body text-right">
+							<button class="btn btn-primary btn-sm" data-dismiss="modal">取消</button>
+							<button class="btn btn-danger btn-sm" data-dismiss="modal" v-on:click ="deleteMsg(nowIndex)">确认</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script type="text/javascript">
+		$(document).ready(function(){
+			new Vue({
+				el: '#container',
+				data: {
+					myData:[],
+					username: '',
+					age: '',
+					nowIndex: -100,
+					sureMsg: '确认删除?'
+				},
+				methods: {
+					add: function(){
+						this.myData.push({
+							name: this.username,
+							age: this.age
+						});
+						this.username='';
+						this.age='';
+					},
+					deleteMsg: function(n){
+						if (n==-2) {
+							this.myData=[];
+						}else{
+							this.myData.splice(n,1);
+						}
+					}
+				}
+			})
+		})
+		</script>
+	</body>
+</html>

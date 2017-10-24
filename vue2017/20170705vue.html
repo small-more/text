@@ -1,0 +1,141 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+	<title>vue事件</title>
+	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+	<script type="text/javascript" src="js/jquery-1.11.1.min.js"></script>
+	<script type="text/javascript" src="js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="js/vue.js"></script>
+	<style type="text/css">
+		*{
+			margin: 0;
+			padding: 0;
+		}
+		.color{
+			color: red;
+		}
+		.bg{
+			background: pink;
+		}
+	</style>
+</head>
+<body>
+	<!-- v-on:click 简写 @click -->
+	<div id="box">
+		<!-- 事件对象$event -->
+		<input type="button" value="按钮" @click="show($event,08)">
+
+		<!-- 事件冒泡  阻止冒泡@click.stop-->
+		<br><br>
+		<div @click="show02">
+			<input type="button" class="btn btn-danger" value="点击" @click.stop="hidden">
+		</div>
+
+		<br><br>
+		<!-- 默认行为  阻止默认行为@contextmenu.prevent-->
+		<input type="button" class="btn btn-primary" value="右击" @contextmenu.prevent="show">
+
+		<br><br>
+		<!-- 键盘事件 @keydown($event ev.keyCode)  @keyup  回车键@keyup/keydown.13和@keyup/keydown.enter 上键@keyup/keydown.up  下键@keyup/keydown.down  左键@keyup/keydown.left  右键@keyup/keydown.right-->
+		<input type="text" @keydown.13="show03">
+		<br><br>
+		<!-- 属性  v-bind:src  简写:src/:width/:height/:title-->
+		<img :src="url" :width='w' :title='t'>
+
+		<br><br>
+		<!-- 特殊属性*方法一*class   [red, bgColorg]都是数据-->
+		<strong :class="[red, bgColor]">文字1</strong>
+		<br>
+		<!-- 特殊属性*方法二*class  {color:true,bg:false} 也可以放数据-->
+		<strong :class='{color:a,bg:b}'>文字2</strong>
+		<!-- 特殊属性*方法三*class  json-->
+		<strong :class='json'>文字3</strong>
+
+		<br><br>
+		<!-- 特殊属性*方法一*style  [c,d]都是数据，如果是复合样式，采用驼峰命名法-->
+		<p :style='[c,d]'>style属性测试1</p>
+		<!-- 特殊属性*方法二*style  json-->
+		<p :style='json01'>style属性测试2</p>
+	</div>
+
+	<script type="text/javascript">
+		$(document).ready(function(){
+			new Vue({
+				el: '#box',
+				data: {
+					url: 'https://ss0.bdstatic.com/5aV1bjqh_Q23odCf/static/superman/img/logo/bd_logo1_31bdc765.png',
+					w: '100px',
+					t: '这是一个logo图片',
+					//class方法一
+					red: 'color',
+					bgColor: 'bg',
+					//class方法二
+					a: true,
+					b: false,
+					//class方法三
+					json: {
+						color: true,
+						bg: true
+					},
+					//style方法一
+					c: {color: 'green'},
+					d: {backgroundColor: 'pink'},
+					//style方法二
+					json01:{
+						color: 'yellow',
+						backgroundColor: 'gray'
+					}
+				},
+				methods:{
+					show: function(ev,b){
+						alert(ev.clientX);  //事件对象$event
+						alert(b);  //参数
+						// ev.cancelBubble=true; //阻止冒泡(原生)
+						// ev.preventDefault();  //阻止默认行为(原生)
+					},
+					hidden: function(){
+						alert(1111);
+
+					},
+					show02: function(){
+						alert(22);
+					},
+					show03: function(ev){
+						// alert(ev.keyCode);
+						alert("您点击的是回车键")
+					}
+				}
+			})
+		})
+	</script>
+
+
+	<!-- ********模板******** {{msg}} 数据更新模板也更新-->
+	<div id="container">
+		<input type="text" v-model="msg">
+		<span v-text="msg"></span>
+		<br>
+		<span v-once>This will never change: {{ msg }}</span>  <!--  v-once 执行一次性地插值，当数据改变时，插值处的内容不会更新 -->
+		<br>
+		<span v-html="msg"></span>  <!-- v-html 将纯文本输出成真正的 HTML-->
+
+		<br><br><br>
+	</div>
+
+	<script type="text/javascript">
+		$(document).ready(function(){
+			new Vue({
+				el: '#container',
+				data: {
+					msg: 'ljljlj'
+				}
+			})
+
+		})
+	</script>
+
+
+</body>
+</html>

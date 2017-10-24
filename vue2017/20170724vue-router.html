@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+		<title>vue路由</title>
+		<script src="bower_components/vue/dist/vue.js"></script>
+		<script src="bower_components/vue-router/dist/vue-router.js"></script>
+	</head>
+	<body>
+		<!--不管是下载bower还是用bower查看或者下载其他的,都要在当前项目下进行-->
+		<!--用bower查看vue-router所有的版本bower info vue-router-->
+		<!--用bower下载vue-router 命令是bower install vue-router(#+版本号:代表要加自己想下载的版本号)-->
+		
+		<!-- SPA应用---- 单页面应用-->
+		<div id="view">
+			<div>
+				<!--router-link 类似于a  跳转链接--> 
+				<router-link to="/home">主页</router-link>
+				<router-link to="/news">新闻</router-link>
+			</div>
+			<div>
+				<router-view></router-view>
+			</div>
+		</div>
+		
+		<script type="text/javascript">		
+			//1.Home News组件都准备好
+			var Home = Vue.extend({
+				template: '<h3>我是主页</h3>'
+			});
+			
+			var News = Vue.extend({
+				template: '<h3>我是新闻</h3>'
+			});
+			
+			//2.配置路由
+			var routes = [
+				{path: '/home',component:Home},
+				{path: '/news',component:News},
+			    {path: '*',redirect: '/home'}
+			];
+			
+			//3.生成路由实例
+			var router = new VueRouter({
+				routes: routes
+			});
+			
+			//4.把路由挂到vue上
+			new Vue({
+				el: '#view',
+				router: router
+			});
+			
+		</script>
+	</body>
+</html>

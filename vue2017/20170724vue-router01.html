@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+		<title>vue路由</title>	
+	</head>
+	<body>
+		<div id="box">
+			<input type="button" value="添加一个路由" @click="push" />
+			<input type="button" value="替换一个路由" @click="replace" />
+			<div>
+				<router-link to="/home">主页</router-link>
+				<router-link to="/user">用户</router-link>
+			</div>
+			<div>
+				<router-view></router-view>
+			</div>
+		</div>
+		
+		<script src="bower_components/vue/dist/vue.js"></script>
+		<script src="bower_components/vue-router/dist/vue-router.js"></script>
+		
+		<script type="text/javascript">
+			//组件
+			var Home = {
+				template: "<h3>我是主页</h3>"
+			};
+			
+			var User = {
+				template: "<div><h3>我是用户信息</h3><ul><li><router-link to='/user/strive/age/10'>Strive</router-link></li><li><router-link to='/user/blue/age/40'>Blue</router-link></li><li><router-link to='/user/eric/age/70'>Eric</router-link></li></ul><div><router-view></router-view></div></div>"
+			};
+			
+			var UserDetail = {
+				//$route.params(类型是obj)一个 key/value 对象，包含了 动态片段 和 全匹配片段，如果没有路由参数，就是一个空对象。
+				//$route.params  当前参数
+				//$route.path    当前路径
+				//$route.query   数据
+				template: '<div>{{$route.params}}</div>'
+			};
+			
+			//配置路由
+			var routes = [
+				{path:'/home',component:Home},
+				{
+					path:'/user',
+					component:User,
+					children:[
+						{
+							// 动态路径参数 以冒号开头
+							path:'username/age/:age',
+							component:UserDetail
+						}
+					]
+				},
+				//redirect重定向  (重定向的意思是，当用户访问 *时，URL 将会被替换成 /home，然后匹配路由为 /home)
+				{path:'*',redirect:'/home'}
+			];
+			
+			//生成路由实例
+			var router = new VueRouter({
+				routes : routes
+			});
+			
+			//把路由挂到vue上
+			new Vue({
+				router : router,
+				methods:{
+					push(){
+						router.push({path:'/home'})  //直接添加一个路由,表现切换路由，本质往历史记录里面添加一个
+					},
+					replace(){
+						router.replace({path:'/user'})  //替换路由，不会往历史记录里面添加
+					}
+				}
+			}).$mount("#box");
+			
+			//router.go(1)等同于history.forward();
+			//router.go(-1)等同于history.back();
+		</script>
+	</body>
+</html>

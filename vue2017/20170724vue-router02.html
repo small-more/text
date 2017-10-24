@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+		<title>vue路由02</title>
+		<script src="bower_components/vue/dist/vue.js"></script>
+		<script src="bower_components/vue-router/dist/vue-router.js"></script>
+	</head>
+	<body>
+		<div id="example">
+			<div>
+				<!-- 使用 router-link 组件来导航. -->
+			    <!-- 通过传入 'to' 属性指定链接. -->
+			    <!-- <router-link> 默认会被渲染成一个 '<a>' 标签 -->
+				<router-link to="/home">主页</router-link>
+				<router-link to="/user">用户</router-link>
+			</div>
+			<div>
+				<!-- 路由出口 -->
+  				<!-- 路由匹配到的组件将渲染在这里 -->
+				<router-view></router-view>
+			</div>
+		</div>
+		
+		<!--将组件(components)映射到路由(routes)-->
+		<script type="text/javascript">
+			// 1. 定义（路由）组件。
+			var Home = {
+				template: "<h2>我是主页</h2>"
+			};
+			
+			var User = {
+				template: "<div><h3>我是用户信息</h3><ul><li><router-link to='/user/username'>某用户</router-link></li></ul><div><router-view></router-view></div></div>"
+			};
+			
+			var UserDetail = {
+				template: '<div>我是某用户</div>'
+			};
+			
+			// 2. 定义路由
+			// 每个路由应该映射一个组件。 其中"component" 可以是
+			// 通过 Vue.extend() 创建的组件构造器，
+			// 或者，只是一个组件配置对象。
+			var routes = [
+				{path:'/home',component:Home},
+				{
+					path:'/user',
+					component:User,
+					children:[//核心
+						{path:'username',component:UserDetail}
+					]
+				},
+				{path:'*',redirect:'/home'} //404
+			];
+			
+			var router = new VueRouter({
+				routes: routes
+			});
+			
+			new Vue({
+				el: '#example',
+				router: router
+			})
+		</script>
+	</body>
+</html>
